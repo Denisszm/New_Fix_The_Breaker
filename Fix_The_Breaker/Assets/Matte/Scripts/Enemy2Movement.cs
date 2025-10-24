@@ -5,6 +5,7 @@ public class Enemy2Movement : MonoBehaviour
     #region Public Settings
     [Header("Enemy Settings")]
     public Transform raycast;
+    public Transform playerBody;
     public LayerMask raycastMask;
     public float raycastLength;
     public float attackDistance;
@@ -30,6 +31,7 @@ public class Enemy2Movement : MonoBehaviour
     void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
+        intTimer = timer;
     }
 
     void Update()
@@ -95,9 +97,7 @@ public class Enemy2Movement : MonoBehaviour
 
     private void Move()
     {
-        Vector2 targetPosition = new Vector2(target.transform.position.x, transform.position.y);
-
-        transform.position = Vector2.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
+        transform.position = Vector2.MoveTowards(this.transform.position, playerBody.position, moveSpeed * Time.deltaTime);
     }
 
     void Attack()
