@@ -257,8 +257,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   roomCount: 40
   worldSize: {x: 100, y: 100}
-  minRoomSize: {x: 4, y: 4}
-  maxRoomSize: {x: 10, y: 10}
+  minRoomSize: {x: 8, y: 4}
+  maxRoomSize: {x: 15, y: 10}
   biomeSplit: 0.5
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
