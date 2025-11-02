@@ -1,13 +1,21 @@
-﻿using System.Collections.Generic;
+﻿using NUnit.Framework;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class RoomGeneration : MonoBehaviour
 {
-    [Header("Room Settings")]
-    [SerializeField] private int roomCount = 20;
+    [Header("World Settings")]
+    [SerializeField] private int roomCount = 40;
+    [SerializeField] private Vector2Int worldSize = new Vector2Int(100, 100);
+
+    [Header("Room Size Settings")]
     [SerializeField] private Vector2Int minRoomSize = new Vector2Int(4, 4);
     [SerializeField] private Vector2Int maxRoomSize = new Vector2Int(10, 10);
-    [SerializeField] private int worldSize = 50;
+
+    [Header("Biome Split (0.5 = Jämt)")]
+    [Range(0f, 1f)]
+    [SerializeField] private float biomeSplit = 0.5f;
 
     private List<Room> rooms = new List<Room>();
     private List<Corridor> corridors = new List<Corridor>();
@@ -22,37 +30,24 @@ public class RoomGeneration : MonoBehaviour
     {
         rooms.Clear();
         int attempts = 0;
+
         while (rooms.Count < roomCount && attempts < roomCount * 20)
         {
             attempts++;
 
             Vector2Int pos = new Vector2Int(
-                Random.Range(-worldSize, worldSize),
-                Random.Range(-worldSize, worldSize)
-            );
+                    Unitiy.Random.Range(-worldSize.x / 2, worldSize.x / 2),
+                    Unity.Random.Range(-worldSize.y / 2, worldSize.y / 2)
+                );
+
             Vector2Int size = new Vector2Int(
-                Random.Range(minRoomSize.x, maxRoomSize.x),
-                Random.Range(minRoomSize.y, maxRoomSize.y)
-            );
+                    Unity.Random.Range(minRoomSize.x, maxRoomSize.x),
+                    Unity.Random.Range(minRoomSize.y, maxRoomSize.y
+                );
+            
 
-            Room.Type type = (Room.Type)Random.Range(0, System.Enum.GetValues(typeof(Room.Type)).Length);
+            
 
-            Room newRoom = new Room(pos, size, type);
-
-            bool collides = false;
-            foreach (Room r in rooms)
-            {
-                if (newRoom.IsColliding(r))
-                {
-                    collides = true;
-                    break;
-                }
-            }
-
-            if (!collides)
-            {
-                rooms.Add(newRoom);
-            }
         }
     }
 
