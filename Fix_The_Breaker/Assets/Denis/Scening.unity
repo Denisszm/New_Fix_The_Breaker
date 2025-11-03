@@ -255,11 +255,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8684a2f144bbfad42b9ba65f19d06842, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  roomCount: 40
-  worldSize: {x: 100, y: 100}
+  roomCount: 100
+  worldSize: {x: 200, y: 200}
   minRoomSize: {x: 8, y: 4}
   maxRoomSize: {x: 15, y: 10}
-  biomeSplit: 0.5
+  biomeSplit: 0.726
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
