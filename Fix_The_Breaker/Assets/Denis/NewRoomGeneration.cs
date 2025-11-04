@@ -29,6 +29,11 @@ public class NewRoomGeneration : MonoBehaviour
         rooms.Clear();
         int attempts = 0;
 
+        AddSpecialRoom(Room.Type.Breakroom, -worldSize.x / 4);
+        AddSpecialRoom(Room.Type.Breakroom, worldSize.x / 4);
+
+        AddSpecialRoom(Room.Type.Breaker, worldSize.x / 2);
+
         while (rooms.Count < roomCount && attempts < roomCount * 20)
         {
             attempts++;
@@ -67,19 +72,13 @@ public class NewRoomGeneration : MonoBehaviour
                 rooms.Add(newRoom);
             }
         }
-
-        AddSpecialRoom(Room.Type.Breakroom, -worldSize.x / 4);
-        AddSpecialRoom(Room.Type.Breakroom, worldSize.x / 4);
-
-        AddSpecialRoom(Room.Type.Breaker, worldSize.x / 2);
     }
 
     void AddSpecialRoom(Room.Type type, int centerX)
     {
         Vector2Int pos = new Vector2Int(
-                centerX + UnityEngine.Random.Range(-10, 10),
-                UnityEngine.Random.Range(-worldSize.y / 2, worldSize.y / 2)
-            );
+            centerX + UnityEngine.Random.Range(-10, 10),
+            UnityEngine.Random.Range(-worldSize.y / 2, worldSize.y / 2));
         Vector2Int size = new Vector2Int(6, 6);
 
         Room newRoom = new Room(pos, size, type);
@@ -96,7 +95,6 @@ public class NewRoomGeneration : MonoBehaviour
         {
             rooms.Add(newRoom);
         }
-        rooms.Add(newRoom);
     }
 
     void GenerateCorridors()
