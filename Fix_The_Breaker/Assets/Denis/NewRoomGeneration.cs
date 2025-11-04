@@ -83,6 +83,19 @@ public class NewRoomGeneration : MonoBehaviour
         Vector2Int size = new Vector2Int(6, 6);
 
         Room newRoom = new Room(pos, size, type);
+        bool collides = false;
+        foreach (Room r in rooms)
+        {
+            if (newRoom.IsColliding(r))
+            {
+                collides = true;
+                break;
+            }
+        }
+        if (!collides)
+        {
+            rooms.Add(newRoom);
+        }
         rooms.Add(newRoom);
     }
 

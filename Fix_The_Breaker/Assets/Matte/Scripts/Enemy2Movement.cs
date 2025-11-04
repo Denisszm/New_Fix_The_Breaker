@@ -1,127 +1,50 @@
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Enemy2Movement : MonoBehaviour
 {
     #region Public Settings
     [Header("Enemy Settings")]
-    public Transform raycast;
-    public Transform playerBody;
-    public LayerMask raycastMask;
-    public float raycastLength;
-    public float attackDistance;
-    public float moveSpeed;
-    public float timer;
+    public NavMeshAgent agent;
+    public Transform player;
+    public LayerMask whatIsGround, whatIsPlayer;
+    public Vector2 walkPoint;
+    public float walkPointRange;
+    public float timeBetweenAttacks;
+    public float sightRange, attackRange;
+    public bool playerInSightRange, playerInAttackRange;
     #endregion
 
     #region Private Variables
-    private RaycastHit2D hit;
-    private GameObject target;
-    private float distance;
-    private bool attackMode;
-    private bool inRange;
-    private bool cooling;
-    private float intTimer;
+    bool walkPointSet;
+    bool alreadyAttacked;
     #endregion
 
-
-
-    private SpriteRenderer spriteRenderer;
-
-
-    void Awake()
+    private void Awake()
     {
-        spriteRenderer = GetComponent<SpriteRenderer>();
-        intTimer = timer;
+        player = GameObject.Find("Plyer").transform;
+        agent = GetComponent<NavMeshAgent>();
     }
 
-    void Update()
+    private void Update()
     {
-        if(inRange)
-        {
-            hit = Physics2D.Raycast(raycast.position, Vector2.left, raycastLength, raycastMask);
-            RaycastDebugger();
-        }
-
-        //When Player is Detected
-        if(hit.collider != null)
-        {
-            EnemyLogic();
-        }
-        else if (hit.collider == null)
-        {
-            inRange = false;
-        }
-
-        if(inRange == false)
-        {
-            StopAttack();
-        }
-
-
-
-        //Sprite turn around
-        /*Vector2 direction = raycast.position - transform.position;
-        direction.Normalize();
-
-        if (direction.x < 0)
-        {
-            spriteRenderer.flipX = true;
-        }
-        else
-            spriteRenderer.flipX = false;*/
+        //Check for sight and attack range
+       playerInSightRange = Physics2D.OverlapCircle()
     }
 
-    private void OnTriggerEnter2D(Collider2D trig)
+    private void Patroling()
     {
-        if(trig.gameObject.tag == "Player")
-        {
-            target = trig.gameObject;
-            inRange = true;
-        }
-    }
-
-    void EnemyLogic()
-    {
-        distance = Vector2.Distance(transform.position, target.transform.position);
-
-        if (distance > attackDistance)
-        {
-            Move();
-            StopAttack();
-        }
-        else if (attackDistance >= distance && cooling == false)
-        {
-            Attack();
-        }
-    }
-
-    private void Move()
-    {
-        transform.position = Vector2.MoveTowards(this.transform.position, playerBody.position, moveSpeed * Time.deltaTime);
-    }
-
-    void Attack()
-    {
-        timer = intTimer; //Reset timer when player get in attack range
-        attackMode = true; // Check if enemy can still attack
-    }
-
-    void StopAttack()
-    {
-        cooling = false;
-        attackMode = false;
 
     }
 
-    void RaycastDebugger()
+    private void Chasing()
     {
-        if(distance > attackDistance)
-        {
-            Debug.DrawRay(raycast.position, Vector3.left * raycastLength, Color.red);
-        }
-        else if (attackDistance > distance)
-        {
-            Debug.DrawRay(raycast.position, Vector3.left * raycastLength, Color.green);
-        }
+
     }
+
+    private void Attacking()
+    {
+
+    }
+
 }
