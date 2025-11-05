@@ -29,7 +29,6 @@ public class Enemy2Movement : MonoBehaviour
     private void Update()
     {
         //Check for sight and attack range
-       playerInSightRange = Physics2D.OverlapCircle()
     }
 
     private void Patroling()
