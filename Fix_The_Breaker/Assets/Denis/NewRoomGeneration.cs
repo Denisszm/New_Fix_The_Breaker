@@ -188,6 +188,11 @@ public class Room
         Office,
         Factory
     }
+    public enum TileType
+    {
+        Floor,
+        Wall
+    }
     public Type roomType;
 
     public Room(Vector2Int pos, Vector2Int sz, Type type, float ratio)
