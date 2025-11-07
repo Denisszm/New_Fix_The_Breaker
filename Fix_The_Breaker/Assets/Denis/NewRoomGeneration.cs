@@ -62,7 +62,7 @@ public class NewRoomGeneration : MonoBehaviour
                 type = Room.Type.Office;
             }
 
-            Room newRoom = new Room(pos, size, type);
+            Room newRoom = new Room(pos, size, type, FloorToWall);
             bool collides = false;
             foreach (Room r in rooms)
             {
@@ -86,7 +86,7 @@ public class NewRoomGeneration : MonoBehaviour
             UnityEngine.Random.Range(-worldSize.y / 2, worldSize.y / 2));
         Vector2Int size = new Vector2Int(6, 6);
 
-        Room newRoom = new Room(pos, size, type);
+        Room newRoom = new Room(pos, size, type, FloorToWall);
         bool collides = false;
         foreach (Room r in rooms)
         {
