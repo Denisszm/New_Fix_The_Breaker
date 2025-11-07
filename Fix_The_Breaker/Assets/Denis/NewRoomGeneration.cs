@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.IntegerTime;
 using UnityEngine;
 
 public class NewRoomGeneration : MonoBehaviour
@@ -14,6 +15,10 @@ public class NewRoomGeneration : MonoBehaviour
     [Header("Biome Split (0.5 = Jämt)")]
     [Range(0f, 1f)]
     [SerializeField] private float biomeSplit = 0.5f;
+
+    [Header("Floor To Wall Ratio (0.5 = Jämt)")]
+    [Range(0f, 1f)]
+    [SerializeField] private float FloorToWall = 0.5f;
 
     private List<Room> rooms = new List<Room>();
     private List<Corridor> corridors = new List<Corridor>();
@@ -173,6 +178,7 @@ public class Room
     public Vector2Int position;
     public Vector2Int size;
     public List<Vector2Int> tiles = new List<Vector2Int>();
+    public float FloorToWallRatio;
     public Color color;
 
     public enum Type
@@ -184,16 +190,21 @@ public class Room
     }
     public Type roomType;
 
-    public Room(Vector2Int pos, Vector2Int sz, Type type)
+    public Room(Vector2Int pos, Vector2Int sz, Type type, float ratio)
     {
         position = pos;
         size = sz;
         roomType = type;
+        FloorToWallRatio = ratio;
         color = GetColorByType(type);
 
         tiles = new List<Vector2Int>();
         for (int x = 0; x < size.x; x++)
         {
+            if (x > pos.x * ratio)
+            {
+                
+            }
             for (int y = 0; y < size.y; y++)
             {
                 tiles.Add(new Vector2Int(position.x + x, position.y + y));
