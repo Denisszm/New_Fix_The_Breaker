@@ -12,6 +12,9 @@ public class NewRoomGeneration : MonoBehaviour
     [SerializeField] private Vector2Int minRoomSize = new Vector2Int(4, 4);
     [SerializeField] private Vector2Int maxRoomSize = new Vector2Int(10, 10);
 
+    [Header("Corridor Size Settings")]
+    [SerializeField] private int Thickness = 2;
+
     [Header("Biome Split (0.5 = Jämt)")]
     [Range(0f, 1f)]
     [SerializeField] private float biomeSplit = 0.5f;
@@ -135,7 +138,7 @@ public class NewRoomGeneration : MonoBehaviour
 
             if ( closestConnected != null && closestUnconnected != null)
             {
-                Corridor corridor = new Corridor(closestConnected.Center(), closestUnconnected.Center());
+                Corridor corridor = new Corridor(closestConnected.Center(), closestUnconnected.Center(), rooms, Thickness);
                 corridors.Add(corridor);
                 connectedRooms.Add(closestUnconnected);
             }
@@ -178,7 +181,8 @@ public class Room
     public Vector2Int position;
     public Vector2Int size;
     public List<Vector2Int> tiles = new List<Vector2Int>();
-    public float FloorToWallRatio;
+    public Dictionary<Vector2Int, TileType> tileTypes = new Dictionary<Vector2Int, TileType>();
+    public float floorToWallRatio;
     public Color color;
 
     public enum Type
@@ -200,19 +204,29 @@ public class Room
         position = pos;
         size = sz;
         roomType = type;
-        FloorToWallRatio = ratio;
+        floorToWallRatio = ratio;
         color = GetColorByType(type);
 
         tiles = new List<Vector2Int>();
-        for (int x = 0; x < size.x; x++)
+        tileTypes = new Dictionary<Vector2Int, TileType>();
+
+        int wallHeight = Mathf.RoundToInt(size.y * (1f - floorToWallRatio));
+
+        for ( int x = 0; x < size.x; x++)
         {
-            if (x > pos.x * ratio)
+            for ( int y = 0; y < size.y; y++)
             {
-                
-            }
-            for (int y = 0; y < size.y; y++)
-            {
-                tiles.Add(new Vector2Int(position.x + x, position.y + y));
+                Vector2Int tilePos = new Vector2Int(position.x + x, position.y + y);
+                tiles.Add(tilePos);
+
+                if ( y >= size.y - wallHeight)
+                {
+                    tileTypes[tilePos] = TileType.Wall;
+                }
+                else
+                {
+                    tileTypes[tilePos] = TileType.Floor;
+                }
             }
         }
     }
@@ -248,18 +262,25 @@ public class Corridor
     public Vector2Int start;
     public Vector2Int end;
     public List<Vector2Int> tiles = new List<Vector2Int>();
+    public Dictionary<Vector2Int, Room.TileType> tileTypes = new Dictionary<Vector2Int, Room.TileType>();
     public Color color = Color.gray;
 
-    public Corridor(Vector2Int from,  Vector2Int to)
+    private int thickness;
+    private List<Room> roomList = new List<Room>();
+
+    public Corridor(Vector2Int from, Vector2Int to, List<Room> rooms, int thick = 1)
     {
         start = from;
         end = to;
+        thickness = thick;
+        roomList = rooms;
         GenerateTiles();
     }
 
     void GenerateTiles()
     {
         tiles = new List<Vector2Int>();
+        tileTypes = new Dictionary<Vector2Int, Room.TileType>();
         
         if ( start.x ==  end.x)
         {
