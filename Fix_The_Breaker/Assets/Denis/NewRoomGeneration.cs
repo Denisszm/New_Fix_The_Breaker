@@ -138,7 +138,7 @@ public class NewRoomGeneration : MonoBehaviour
 
             if ( closestConnected != null && closestUnconnected != null)
             {
-                Corridor corridor = new Corridor(closestConnected.Center(), closestUnconnected.Center(), rooms, Thickness);
+                Corridor corridor = new Corridor(closestConnected.Center(), closestUnconnected.Center(), rooms, Thickness, FloorToWall);
                 corridors.Add(corridor);
                 connectedRooms.Add(closestUnconnected);
             }
@@ -266,13 +266,15 @@ public class Corridor
     public Color color = Color.gray;
 
     private int thickness;
+    private float floorToWall;
     private List<Room> roomList = new List<Room>();
 
-    public Corridor(Vector2Int from, Vector2Int to, List<Room> rooms, int thick = 1)
+    public Corridor(Vector2Int from, Vector2Int to, List<Room> rooms, int thick, float ratio)
     {
         start = from;
         end = to;
         thickness = thick;
+        floorToWall = ratio;
         roomList = rooms;
         GenerateTiles();
     }
@@ -281,8 +283,11 @@ public class Corridor
     {
         tiles = new List<Vector2Int>();
         tileTypes = new Dictionary<Vector2Int, Room.TileType>();
-        
-        if ( start.x ==  end.x)
+
+        bool isStraightX = start.y == end.y;
+        bool isStraightY = start.x == end.x;
+
+        if ( isStraightY)
         {
             int yDir;
             if ( start.y < end.y)
@@ -296,10 +301,25 @@ public class Corridor
 
             for ( int y = start.y; y != end.y; y += yDir)
             {
-                tiles.Add(new Vector2Int(start.x, y));
+                for ( int t = -thickness / 2; t <=  thickness / 2; t++)
+                {
+                    Vector2Int pos = new Vector2Int(start.x + t, y);
+                    bool isWall = Mathf.Abs(t) > thickness * floorToWall;
+
+                    if (isWall)
+                    {
+                        tileTypes[pos] = Room.TileType.Wall;
+                    }
+                    else
+                    {
+                        tileTypes[pos] = Room.TileType.Floor;
+                    }
+
+                    tiles.Add(pos);
+                }
             }
         }
-        else if (start.y == end.y)
+        else if (isStraightX)
         {
             int xDir;
             if (start.x < end.x)
@@ -313,7 +333,22 @@ public class Corridor
 
             for (int x = start.x; x != end.x; x += xDir)
             {
-                tiles.Add(new Vector2Int(x, start.y));
+                for (int t = -thickness / 2; t <= thickness / 2; t++)
+                {
+                    Vector2Int pos = new Vector2Int(x, start.y + t);
+                    bool isWall = Mathf.Abs(t) > thickness * floorToWall;
+
+                    if (isWall)
+                    {
+                        tileTypes[pos] = Room.TileType.Wall;
+                    }
+                    else
+                    {
+                        tileTypes[pos] = Room.TileType.Floor;
+                    }
+
+                    tiles.Add(pos);
+                }
             }
         }
         else
@@ -330,7 +365,22 @@ public class Corridor
 
             for (int x = start.x; x != end.x; x += xDir)
             {
-                tiles.Add(new Vector2Int(x, start.y));
+                for (int t = -thickness / 2; t <= thickness / 2; t++)
+                {
+                    Vector2Int pos = new Vector2Int(x, start.y + t);
+                    bool isWall = Mathf.Abs(t) > thickness * floorToWall;
+
+                    if (isWall)
+                    {
+                        tileTypes[pos] = Room.TileType.Wall;
+                    }
+                    else
+                    {
+                        tileTypes[pos] = Room.TileType.Floor;
+                    }
+                    tiles.Add(pos);
+                    
+                }
             }
 
             int yDir;
@@ -345,10 +395,58 @@ public class Corridor
 
             for (int y = start.y; y != end.y; y += yDir)
             {
-                tiles.Add(new Vector2Int(end.x, y));
+                for (int t = -thickness / 2; t <= thickness / 2; t++)
+                {
+                    Vector2Int pos = new Vector2Int(end.x + t, y);
+                    bool isWall = Mathf.Abs(t) > thickness * floorToWall;
+
+                    if (isWall)
+                    {
+                        tileTypes[pos] = Room.TileType.Wall;
+                    }
+                    else
+                    {
+                        tileTypes[pos] = Room.TileType.Floor;
+                    }
+                    tiles.Add(pos);
+
+                }
             }
         }
+        RemoveCollidingTiles();
+    }
 
-        tiles.Add(end);
+    void RemoveCollidingTiles()
+    {
+        List<Vector2Int> nonColliding = new List<Vector2Int>();
+
+        for ( int i = 0; i < tiles.Count; i++)
+        {
+            Vector2Int t = tiles[i];
+            bool collides = false;
+
+            for ( int r = 0; r < roomList.Count; r++)
+            {
+                if ( isCollidingWithRoomTile(t, roomList[r]))
+                {
+                    collides = true;
+                    break;
+                }
+                
+            }
+            if (!collides)
+            {
+                nonColliding.Add(t);
+            }
+        }
+        tiles = nonColliding;
+    }
+
+    bool isCollidingWithRoomTile(Vector2Int tile, Room room)
+    {
+        return tile.x >= room.position.x &&
+               tile.x < room.position.x + room.size.x &&
+               tile.y >= room.position.y &&
+               tile.y < room.position.y + room.size.y;
     }
 }
