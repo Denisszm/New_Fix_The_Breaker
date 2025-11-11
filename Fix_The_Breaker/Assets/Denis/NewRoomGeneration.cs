@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class NewRoomGeneration : MonoBehaviour
 {
+    [SerializeField] private GameObject floorPrefab;
+    [SerializeField] private GameObject wallPrefab;
+    
     [Header("World Settings")]
     [SerializeField] private int roomCount = 40;
     [SerializeField] private Vector2Int worldSize = new Vector2Int(100, 100);
@@ -30,6 +33,14 @@ public class NewRoomGeneration : MonoBehaviour
     {
         GenerateRooms();
         GenerateCorridors();
+        DrawWorld();
+    }
+
+    void DrawWorld()
+    {
+        GameObject WorldParent = new GameObject("GeneratedWorld");
+
+
     }
 
     void GenerateRooms()
