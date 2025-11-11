@@ -129,6 +129,7 @@ GameObject:
   m_Component:
   - component: {fileID: 18620471}
   - component: {fileID: 18620470}
+  - component: {fileID: 18620472}
   m_Layer: 0
   m_Name: Stalker
   m_TagString: Untagged
@@ -169,6 +170,43 @@ Transform:
   - {fileID: 1820127091}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!70 &18620472
+CapsuleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 18620469}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0.1, y: 0}
+  m_Size: {x: 0.7, y: 2}
+  m_Direction: 0
 --- !u!1 &32584486
 GameObject:
   m_ObjectHideFlags: 0
@@ -267,6 +305,7 @@ GameObject:
   - component: {fileID: 492441490}
   - component: {fileID: 492441489}
   - component: {fileID: 492441491}
+  - component: {fileID: 492441492}
   m_Layer: 0
   m_Name: Crawler
   m_TagString: Untagged
@@ -331,7 +370,44 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 525520676}
   speed: 2
-  movementDetection: 4
+  movementDetection: 6
+  animator: {fileID: 1894961173}
+--- !u!58 &492441492
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 492441488}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_Radius: 1
 --- !u!1 &525520676
 GameObject:
   m_ObjectHideFlags: 0
@@ -345,7 +421,7 @@ GameObject:
   - component: {fileID: 525520679}
   - component: {fileID: 525520680}
   m_Layer: 8
-  m_Name: fake Player
+  m_Name: Fake Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -415,7 +491,7 @@ Transform:
   m_GameObject: {fileID: 525520676}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 7.3, y: -0.1418, z: 0}
+  m_LocalPosition: {x: 3.16, y: -0.06, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -451,7 +527,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
