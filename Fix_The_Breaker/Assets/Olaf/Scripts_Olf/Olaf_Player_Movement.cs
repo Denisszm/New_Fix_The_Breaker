@@ -9,7 +9,10 @@ public class Olaf_Player_Movement : MonoBehaviour
 
     public Transform mouseObject;
 
-    public Transform bulletSpawnPoint;
+    public GameObject FlashPreFab;
+    public Transform FlashSpawnPoint;
+
+
 
     // Update is called once per frame
     void Update()
@@ -20,7 +23,6 @@ public class Olaf_Player_Movement : MonoBehaviour
         moveDirection = new Vector2(MovementX, MovementY).normalized;
 
         AimGunAtMouse();
-
         /*if (rb.position.y < -2 && rb.position.y > -3)
         {
             transform.localScale = new Vector3(rb.position.y * 0.7f, rb.position.y * 0.7f, 1);
@@ -37,8 +39,15 @@ public class Olaf_Player_Movement : MonoBehaviour
     private void AimGunAtMouse()
     {
         Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        Vector2 direction = (mousePosition - (Vector2)bulletSpawnPoint.position).normalized;
-        bulletSpawnPoint.right = direction;
+        Vector2 direction = (mousePosition - (Vector2)FlashSpawnPoint.position).normalized;
+        FlashSpawnPoint.right = direction;
+    }
+    public void FlashlightLogic()
+    {
+        if (Input.GetButtonDown("Fire1"))
+        {
+            AimGunAtMouse();
+        }
     }
     private void FixedUpdate()
     {
