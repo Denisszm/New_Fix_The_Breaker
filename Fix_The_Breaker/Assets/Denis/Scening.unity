@@ -119,6 +119,11 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &394099924 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8173420110833948942, guid: 5c53c1c1ea4b78f41a837dce6bced8d5, type: 3}
+  m_PrefabInstance: {fileID: 1834549369860541247}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &934110342
 GameObject:
   m_ObjectHideFlags: 0
@@ -300,8 +305,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8684a2f144bbfad42b9ba65f19d06842, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  floorPrefab: {fileID: 0}
-  wallPrefab: {fileID: 0}
+  floorPrefab: {fileID: 394099924}
+  wallPrefab: {fileID: 2081218919}
   roomCount: 100
   worldSize: {x: 150, y: 150}
   minRoomSize: {x: 10, y: 5}
@@ -309,6 +314,11 @@ MonoBehaviour:
   Thickness: 2
   biomeSplit: 0.5
   FloorToWall: 0.5
+--- !u!1 &2081218919 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2998587200460023515, guid: edd69b87cb1faac419c1106f7f5b84e7, type: 3}
+  m_PrefabInstance: {fileID: 6548812619674839898}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1834549369860541247
 PrefabInstance:
   m_ObjectHideFlags: 0

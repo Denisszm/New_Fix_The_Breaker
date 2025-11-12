@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Unity.IntegerTime;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class NewRoomGeneration : MonoBehaviour
 {
@@ -38,8 +39,57 @@ public class NewRoomGeneration : MonoBehaviour
 
     void DrawWorld()
     {
-        GameObject WorldParent = new GameObject("GeneratedWorld");
+        foreach ( Transform child in transform)
+        {
+            Destroy(child.gameObject);
+        }
 
+        foreach ( Room room in rooms)
+        {
+            foreach ( KeyValuePair<Vector2Int, Room.TileType> tile in room.tileTypes)
+            {
+                GameObject prefabToUse = null;
+
+                if ( tile.Value == Room.TileType.Floor)
+                {
+                    prefabToUse = floorPrefab;
+                }
+                else if ( tile.Value == Room.TileType.Wall)
+                {
+                    prefabToUse = wallPrefab;
+                }
+
+                if ( prefabToUse != null )
+                {
+                    Vector3 pos = new Vector3(tile.Key.x, tile.Key.y, 0);
+                    Instantiate(prefabToUse, pos, Quaternion.identity, transform);
+                }
+
+            }
+        }
+
+        foreach (Corridor corridor in corridors)
+        {
+            foreach (KeyValuePair<Vector2Int, Room.TileType> tile in corridor.tileTypes)
+            {
+                GameObject prefabToUse = null;
+
+                if (tile.Value == Room.TileType.Floor)
+                {
+                    prefabToUse = floorPrefab;
+                }
+                else if (tile.Value == Room.TileType.Wall)
+                {
+                    prefabToUse = wallPrefab;
+                }
+
+                if (prefabToUse != null)
+                {
+                    Vector3 pos = new Vector3(tile.Key.x, tile.Key.y, 0);
+                    Instantiate(prefabToUse, pos, Quaternion.identity, transform);
+                }
+            }
+        }
 
     }
 
@@ -156,35 +206,35 @@ public class NewRoomGeneration : MonoBehaviour
         }
     }
 
-    void OnDrawGizmos()
-    {
-        if (rooms != null)
-        {
-            foreach (Room r in rooms)
-            {
-                Gizmos.color = r.color;
-                Vector3 center = new Vector3(r.position.x + r.size.x / 2f,
-                                             r.position.y + r.size.y / 2f,
-                                             0);
-                Vector3 size = new Vector3(r.size.x, r.size.y, 0.1f);
-                Gizmos.DrawCube(center, size);
-            }
-        }
+    //void OnDrawGizmos()
+    //{
+    //    if (rooms != null)
+    //    {
+    //        foreach (Room r in rooms)
+    //        {
+    //            Gizmos.color = r.color;
+    //            Vector3 center = new Vector3(r.position.x + r.size.x / 2f,
+    //                                         r.position.y + r.size.y / 2f,
+    //                                         0);
+    //            Vector3 size = new Vector3(r.size.x, r.size.y, 0.1f);
+    //            Gizmos.DrawCube(center, size);
+    //        }
+    //    }
 
-        if (corridors != null)
-        {
-            Gizmos.color = Color.gray;
-            foreach (Corridor c in corridors)
-            {
-                foreach (Vector2Int t in c.tiles)
-                {
-                    Vector3 tileCenter = new Vector3(t.x + 0.5f, t.y + 0.5f, 0);
-                    Vector3 tileSize = new Vector3(1, 1, 0.1f);
-                    Gizmos.DrawCube(tileCenter, tileSize);
-                }
-            }
-        }
-    }
+    //    if (corridors != null)
+    //    {
+    //        Gizmos.color = Color.gray;
+    //        foreach (Corridor c in corridors)
+    //        {
+    //            foreach (Vector2Int t in c.tiles)
+    //            {
+    //                Vector3 tileCenter = new Vector3(t.x + 0.5f, t.y + 0.5f, 0);
+    //                Vector3 tileSize = new Vector3(1, 1, 0.1f);
+    //                Gizmos.DrawCube(tileCenter, tileSize);
+    //            }
+    //        }
+    //    }
+    //}
 }
 
 public class Room
