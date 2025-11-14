@@ -7,7 +7,7 @@ public class NewRoomGeneration : MonoBehaviour
 {
     [SerializeField] private GameObject floorPrefab;
     [SerializeField] private GameObject wallPrefab;
-    
+
     [Header("World Settings")]
     [SerializeField] private int roomCount = 40;
     [SerializeField] private Vector2Int worldSize = new Vector2Int(100, 100);
@@ -30,36 +30,65 @@ public class NewRoomGeneration : MonoBehaviour
     private List<Room> rooms = new List<Room>();
     private List<Corridor> corridors = new List<Corridor>();
 
+    public Dictionary<Vector2Int, Room.TileType> worldTiles =
+    new Dictionary<Vector2Int, Room.TileType>();
+
+
     void Start()
     {
         GenerateRooms();
         GenerateCorridors();
         DrawWorld();
+        BuildWorldTileMap();
+
+    }
+
+    void BuildWorldTileMap()
+    {
+        worldTiles.Clear();
+
+        foreach (Room room in rooms)
+        {
+            foreach (var kvp in room.tileTypes)
+            {
+                if (!worldTiles.ContainsKey(kvp.Key))
+                    worldTiles[kvp.Key] = kvp.Value;
+            }
+        }
+
+        foreach (Corridor corridor in corridors)
+        {
+            foreach (var kvp in corridor.tileTypes)
+            {
+                if (!worldTiles.ContainsKey(kvp.Key))
+                    worldTiles[kvp.Key] = kvp.Value;
+            }
+        }
     }
 
     void DrawWorld()
     {
-        foreach ( Transform child in transform)
+        foreach (Transform child in transform)
         {
             Destroy(child.gameObject);
         }
 
-        foreach ( Room room in rooms)
+        foreach (Room room in rooms)
         {
-            foreach ( KeyValuePair<Vector2Int, Room.TileType> tile in room.tileTypes)
+            foreach (KeyValuePair<Vector2Int, Room.TileType> tile in room.tileTypes)
             {
                 GameObject prefabToUse = null;
 
-                if ( tile.Value == Room.TileType.Floor)
+                if (tile.Value == Room.TileType.Floor)
                 {
                     prefabToUse = floorPrefab;
                 }
-                else if ( tile.Value == Room.TileType.Wall)
+                else if (tile.Value == Room.TileType.Wall)
                 {
                     prefabToUse = wallPrefab;
                 }
 
-                if ( prefabToUse != null )
+                if (prefabToUse != null)
                 {
                     Vector3 pos = new Vector3(tile.Key.x, tile.Key.y, 0);
                     Instantiate(prefabToUse, pos, Quaternion.identity, transform);
@@ -183,12 +212,12 @@ public class NewRoomGeneration : MonoBehaviour
             {
                 foreach (Room unconnected in rooms)
                 {
-                    if ( connectedRooms.Contains(unconnected))
+                    if (connectedRooms.Contains(unconnected))
                     {
                         continue;
                     }
-                    float distance = Vector2Int.Distance(connected.Center(),unconnected.Center());
-                    if ( distance < minDistance)
+                    float distance = Vector2Int.Distance(connected.Center(), unconnected.Center());
+                    if (distance < minDistance)
                     {
                         minDistance = distance;
                         closestConnected = connected;
@@ -197,7 +226,7 @@ public class NewRoomGeneration : MonoBehaviour
                 }
             }
 
-            if ( closestConnected != null && closestUnconnected != null)
+            if (closestConnected != null && closestUnconnected != null)
             {
                 Corridor corridor = new Corridor(closestConnected.Center(), closestUnconnected.Center(), rooms, Thickness, FloorToWall);
                 corridors.Add(corridor);
@@ -206,308 +235,340 @@ public class NewRoomGeneration : MonoBehaviour
         }
     }
 
-    //void OnDrawGizmos()
-    //{
-    //    if (rooms != null)
-    //    {
-    //        foreach (Room r in rooms)
-    //        {
-    //            Gizmos.color = r.color;
-    //            Vector3 center = new Vector3(r.position.x + r.size.x / 2f,
-    //                                         r.position.y + r.size.y / 2f,
-    //                                         0);
-    //            Vector3 size = new Vector3(r.size.x, r.size.y, 0.1f);
-    //            Gizmos.DrawCube(center, size);
-    //        }
-    //    }
+    void OnDrawGizmos()
+    {
+        if (rooms != null)
+        {
+            foreach (Room r in rooms)
+            {
+                Gizmos.color = r.color;
+                Vector3 center = new Vector3(r.position.x + r.size.x / 2f,
+                                             r.position.y + r.size.y / 2f,
+                                             0);
+                Vector3 size = new Vector3(r.size.x, r.size.y, 0.1f);
+                Gizmos.DrawCube(center, size);
+            }
+        }
 
-    //    if (corridors != null)
-    //    {
-    //        Gizmos.color = Color.gray;
-    //        foreach (Corridor c in corridors)
-    //        {
-    //            foreach (Vector2Int t in c.tiles)
-    //            {
-    //                Vector3 tileCenter = new Vector3(t.x + 0.5f, t.y + 0.5f, 0);
-    //                Vector3 tileSize = new Vector3(1, 1, 0.1f);
-    //                Gizmos.DrawCube(tileCenter, tileSize);
-    //            }
-    //        }
-    //    }
-    //}
+        if (corridors != null)
+        {
+            Gizmos.color = Color.gray;
+            foreach (Corridor c in corridors)
+            {
+                foreach (Vector2Int t in c.tiles)
+                {
+                    Vector3 tileCenter = new Vector3(t.x + 0.5f, t.y + 0.5f, 0);
+                    Vector3 tileSize = new Vector3(1, 1, 0.1f);
+                    Gizmos.DrawCube(tileCenter, tileSize);
+                }
+            }
+        }
+    }
 }
 
 public class Room
-{
-    public Vector2Int position;
-    public Vector2Int size;
-    public List<Vector2Int> tiles = new List<Vector2Int>();
-    public Dictionary<Vector2Int, TileType> tileTypes = new Dictionary<Vector2Int, TileType>();
-    public float floorToWallRatio;
-    public Color color;
-
-    public enum Type
     {
-        Breaker,
-        Breakroom,
-        Office,
-        Factory
-    }
-    public enum TileType
-    {
-        Floor,
-        Wall
-    }
-    public Type roomType;
+        public Vector2Int position;
+        public Vector2Int size;
+        public List<Vector2Int> tiles = new List<Vector2Int>();
+        public Dictionary<Vector2Int, TileType> tileTypes = new Dictionary<Vector2Int, TileType>();
+        public float floorToWallRatio;
+        public Color color;
 
-    public Room(Vector2Int pos, Vector2Int sz, Type type, float ratio)
-    {
-        position = pos;
-        size = sz;
-        roomType = type;
-        floorToWallRatio = ratio;
-        color = GetColorByType(type);
-
-        tiles = new List<Vector2Int>();
-        tileTypes = new Dictionary<Vector2Int, TileType>();
-
-        int wallHeight = Mathf.RoundToInt(size.y * (1f - floorToWallRatio));
-
-        for ( int x = 0; x < size.x; x++)
+        public enum Type
         {
-            for ( int y = 0; y < size.y; y++)
-            {
-                Vector2Int tilePos = new Vector2Int(position.x + x, position.y + y);
-                tiles.Add(tilePos);
+            Breaker,
+            Breakroom,
+            Office,
+            Factory
+        }
+        public enum TileType
+        {
+            Floor,
+            Wall
+        }
+        public Type roomType;
 
-                if ( y >= size.y - wallHeight)
+        public Room(Vector2Int pos, Vector2Int sz, Type type, float ratio)
+        {
+            position = pos;
+            size = sz;
+            roomType = type;
+            floorToWallRatio = ratio;
+            color = GetColorByType(type);
+
+            tiles = new List<Vector2Int>();
+            tileTypes = new Dictionary<Vector2Int, TileType>();
+
+            int wallHeight = Mathf.RoundToInt(size.y * (1f - floorToWallRatio));
+
+            for (int x = 0; x < size.x; x++)
+            {
+                for (int y = 0; y < size.y; y++)
                 {
-                    tileTypes[tilePos] = TileType.Wall;
+                    Vector2Int tilePos = new Vector2Int(position.x + x, position.y + y);
+                    tiles.Add(tilePos);
+
+                    if (y >= size.y - wallHeight)
+                    {
+                        tileTypes[tilePos] = TileType.Wall;
+                    }
+                    else
+                    {
+                        tileTypes[tilePos] = TileType.Floor;
+                    }
+                }
+            }
+        }
+
+        public bool IsColliding(Room other)
+        {
+            return !(position.x + size.x <= other.position.x ||
+                     other.position.x + other.size.x <= position.x ||
+                     position.y + size.y <= other.position.y ||
+                     other.position.y + other.size.y <= position.y);
+        }
+
+        private Color GetColorByType(Type type)
+        {
+            switch (type)
+            {
+                case Type.Breaker: return Color.red;
+                case Type.Breakroom: return Color.green;
+                case Type.Office: return Color.blue;
+                case Type.Factory: return Color.yellow;
+                default: return Color.white;
+            }
+        }
+
+        public Vector2Int Center()
+        {
+            return new Vector2Int(position.x + size.x / 2, position.y + size.y / 2);
+        }
+    }
+
+    public class Corridor
+    {
+        public List<List<Vector2Int>> segments = new List<List<Vector2Int>>();
+        public Vector2Int start;
+        public Vector2Int end;
+        public List<Vector2Int> tiles = new List<Vector2Int>();
+        public Dictionary<Vector2Int, Room.TileType> tileTypes = new Dictionary<Vector2Int, Room.TileType>();
+        public Color color = Color.gray;
+
+        public int thickness;
+        private float floorToWall;
+        private List<Room> roomList = new List<Room>();
+
+        public Corridor(Vector2Int from, Vector2Int to, List<Room> rooms, int thick, float ratio)
+        {
+            start = from;
+            end = to;
+            thickness = thick;
+            floorToWall = ratio;
+            roomList = rooms;
+            GenerateTiles();
+        }
+
+        void GenerateTiles()
+        {
+            BuildSegments();
+            tiles = new List<Vector2Int>();
+            tileTypes = new Dictionary<Vector2Int, Room.TileType>();
+
+            bool isStraightX = start.y == end.y;
+            bool isStraightY = start.x == end.x;
+
+            if (isStraightY)
+            {
+                int yDir;
+                if (start.y < end.y)
+                {
+                    yDir = 1;
                 }
                 else
                 {
-                    tileTypes[tilePos] = TileType.Floor;
+                    yDir = -1;
+                }
+
+                for (int y = start.y; y != end.y; y += yDir)
+                {
+                    for (int t = -thickness / 2; t <= thickness / 2; t++)
+                    {
+                        Vector2Int pos = new Vector2Int(start.x + t, y);
+                        bool isWall = Mathf.Abs(t) > thickness * floorToWall;
+
+                        if (isWall)
+                        {
+                            tileTypes[pos] = Room.TileType.Wall;
+                        }
+                        else
+                        {
+                            tileTypes[pos] = Room.TileType.Floor;
+                        }
+
+                        tiles.Add(pos);
+                    }
                 }
             }
-        }
-    }
-
-    public bool IsColliding(Room other)
-    {
-        return !(position.x + size.x <= other.position.x ||
-                 other.position.x + other.size.x <= position.x ||
-                 position.y + size.y <= other.position.y ||
-                 other.position.y + other.size.y <= position.y);
-    }
-
-    private Color GetColorByType(Type type)
-    {
-        switch (type)
-        {
-            case Type.Breaker: return Color.red;
-            case Type.Breakroom: return Color.green;
-            case Type.Office: return Color.blue;
-            case Type.Factory: return Color.yellow;
-            default: return Color.white;
-        }
-    }
-
-    public Vector2Int Center()
-    {
-        return new Vector2Int(position.x + size.x / 2, position.y + size.y / 2);
-    }
-}
-
-public class Corridor
-{
-    public Vector2Int start;
-    public Vector2Int end;
-    public List<Vector2Int> tiles = new List<Vector2Int>();
-    public Dictionary<Vector2Int, Room.TileType> tileTypes = new Dictionary<Vector2Int, Room.TileType>();
-    public Color color = Color.gray;
-
-    private int thickness;
-    private float floorToWall;
-    private List<Room> roomList = new List<Room>();
-
-    public Corridor(Vector2Int from, Vector2Int to, List<Room> rooms, int thick, float ratio)
-    {
-        start = from;
-        end = to;
-        thickness = thick;
-        floorToWall = ratio;
-        roomList = rooms;
-        GenerateTiles();
-    }
-
-    void GenerateTiles()
-    {
-        tiles = new List<Vector2Int>();
-        tileTypes = new Dictionary<Vector2Int, Room.TileType>();
-
-        bool isStraightX = start.y == end.y;
-        bool isStraightY = start.x == end.x;
-
-        if ( isStraightY)
-        {
-            int yDir;
-            if ( start.y < end.y)
+            else if (isStraightX)
             {
-                yDir = 1;
+                int xDir;
+                if (start.x < end.x)
+                {
+                    xDir = 1;
+                }
+                else
+                {
+                    xDir = -1;
+                }
+
+                for (int x = start.x; x != end.x; x += xDir)
+                {
+                    for (int t = -thickness / 2; t <= thickness / 2; t++)
+                    {
+                        Vector2Int pos = new Vector2Int(x, start.y + t);
+                        bool isWall = Mathf.Abs(t) > thickness * floorToWall;
+
+                        if (isWall)
+                        {
+                            tileTypes[pos] = Room.TileType.Wall;
+                        }
+                        else
+                        {
+                            tileTypes[pos] = Room.TileType.Floor;
+                        }
+
+                        tiles.Add(pos);
+                    }
+                }
             }
             else
             {
-                yDir = -1;
-            }
-
-            for ( int y = start.y; y != end.y; y += yDir)
-            {
-                for ( int t = -thickness / 2; t <=  thickness / 2; t++)
+                int xDir;
+                if (start.x < end.x)
                 {
-                    Vector2Int pos = new Vector2Int(start.x + t, y);
-                    bool isWall = Mathf.Abs(t) > thickness * floorToWall;
+                    xDir = 1;
+                }
+                else
+                {
+                    xDir = -1;
+                }
 
-                    if (isWall)
+                for (int x = start.x; x != end.x; x += xDir)
+                {
+                    for (int t = -thickness / 2; t <= thickness / 2; t++)
                     {
-                        tileTypes[pos] = Room.TileType.Wall;
-                    }
-                    else
-                    {
-                        tileTypes[pos] = Room.TileType.Floor;
-                    }
+                        Vector2Int pos = new Vector2Int(x, start.y + t);
+                        bool isWall = Mathf.Abs(t) > thickness * floorToWall;
 
-                    tiles.Add(pos);
+                        if (isWall)
+                        {
+                            tileTypes[pos] = Room.TileType.Wall;
+                        }
+                        else
+                        {
+                            tileTypes[pos] = Room.TileType.Floor;
+                        }
+                        tiles.Add(pos);
+
+                    }
+                }
+
+                int yDir;
+                if (start.y < end.y)
+                {
+                    yDir = 1;
+                }
+                else
+                {
+                    yDir = -1;
+                }
+
+                for (int y = start.y; y != end.y; y += yDir)
+                {
+                    for (int t = -thickness / 2; t <= thickness / 2; t++)
+                    {
+                        Vector2Int pos = new Vector2Int(end.x + t, y);
+                        bool isWall = Mathf.Abs(t) > thickness * floorToWall;
+
+                        if (isWall)
+                        {
+                            tileTypes[pos] = Room.TileType.Wall;
+                        }
+                        else
+                        {
+                            tileTypes[pos] = Room.TileType.Floor;
+                        }
+                        tiles.Add(pos);
+
+                    }
                 }
             }
+            RemoveCollidingTiles();
         }
-        else if (isStraightX)
+
+        void BuildSegments()
         {
-            int xDir;
-            if (start.x < end.x)
-            {
-                xDir = 1;
-            }
-            else
-            {
-                xDir = -1;
-            }
+            segments.Clear();
 
-            for (int x = start.x; x != end.x; x += xDir)
+            if (tiles.Count == 0)
+                return;
+
+            List<Vector2Int> current = new List<Vector2Int>();
+            current.Add(tiles[0]);
+
+            for (int i = 1; i < tiles.Count; i++)
             {
-                for (int t = -thickness / 2; t <= thickness / 2; t++)
+                Vector2Int prev = tiles[i - 1];
+                Vector2Int curr = tiles[i];
+                bool sameDirection = (curr.x - prev.x == prev.x - (i > 1 ? tiles[i - 2].x : prev.x)) &&
+                                     (curr.y - prev.y == prev.y - (i > 1 ? tiles[i - 2].y : prev.y));
+
+                if (!sameDirection)
                 {
-                    Vector2Int pos = new Vector2Int(x, start.y + t);
-                    bool isWall = Mathf.Abs(t) > thickness * floorToWall;
-
-                    if (isWall)
-                    {
-                        tileTypes[pos] = Room.TileType.Wall;
-                    }
-                    else
-                    {
-                        tileTypes[pos] = Room.TileType.Floor;
-                    }
-
-                    tiles.Add(pos);
+                    segments.Add(current);
+                    current = new List<Vector2Int>();
                 }
+
+                current.Add(curr);
             }
+
+            segments.Add(current);
         }
-        else
+
+
+        void RemoveCollidingTiles()
         {
-            int xDir;
-            if (start.x < end.x)
-            {
-                xDir = 1;
-            }
-            else
-            {
-                xDir = -1;
-            }
+            List<Vector2Int> nonColliding = new List<Vector2Int>();
 
-            for (int x = start.x; x != end.x; x += xDir)
+            for (int i = 0; i < tiles.Count; i++)
             {
-                for (int t = -thickness / 2; t <= thickness / 2; t++)
+                Vector2Int t = tiles[i];
+                bool collides = false;
+
+                for (int r = 0; r < roomList.Count; r++)
                 {
-                    Vector2Int pos = new Vector2Int(x, start.y + t);
-                    bool isWall = Mathf.Abs(t) > thickness * floorToWall;
-
-                    if (isWall)
+                    if (isCollidingWithRoomTile(t, roomList[r]))
                     {
-                        tileTypes[pos] = Room.TileType.Wall;
+                        collides = true;
+                        break;
                     }
-                    else
-                    {
-                        tileTypes[pos] = Room.TileType.Floor;
-                    }
-                    tiles.Add(pos);
-                    
-                }
-            }
-
-            int yDir;
-            if (start.y < end.y)
-            {
-                yDir = 1;
-            }
-            else
-            {
-                yDir = -1;
-            }
-
-            for (int y = start.y; y != end.y; y += yDir)
-            {
-                for (int t = -thickness / 2; t <= thickness / 2; t++)
-                {
-                    Vector2Int pos = new Vector2Int(end.x + t, y);
-                    bool isWall = Mathf.Abs(t) > thickness * floorToWall;
-
-                    if (isWall)
-                    {
-                        tileTypes[pos] = Room.TileType.Wall;
-                    }
-                    else
-                    {
-                        tileTypes[pos] = Room.TileType.Floor;
-                    }
-                    tiles.Add(pos);
 
                 }
+                if (!collides)
+                {
+                    nonColliding.Add(t);
+                }
             }
+            tiles = nonColliding;
         }
-        RemoveCollidingTiles();
-    }
 
-    void RemoveCollidingTiles()
-    {
-        List<Vector2Int> nonColliding = new List<Vector2Int>();
-
-        for ( int i = 0; i < tiles.Count; i++)
+        bool isCollidingWithRoomTile(Vector2Int tile, Room room)
         {
-            Vector2Int t = tiles[i];
-            bool collides = false;
-
-            for ( int r = 0; r < roomList.Count; r++)
-            {
-                if ( isCollidingWithRoomTile(t, roomList[r]))
-                {
-                    collides = true;
-                    break;
-                }
-                
-            }
-            if (!collides)
-            {
-                nonColliding.Add(t);
-            }
+            return tile.x >= room.position.x &&
+                   tile.x < room.position.x + room.size.x &&
+                   tile.y >= room.position.y &&
+                   tile.y < room.position.y + room.size.y;
         }
-        tiles = nonColliding;
     }
-
-    bool isCollidingWithRoomTile(Vector2Int tile, Room room)
-    {
-        return tile.x >= room.position.x &&
-               tile.x < room.position.x + room.size.x &&
-               tile.y >= room.position.y &&
-               tile.y < room.position.y + room.size.y;
-    }
-}
