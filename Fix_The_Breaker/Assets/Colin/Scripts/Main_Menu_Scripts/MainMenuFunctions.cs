@@ -18,7 +18,8 @@ public class MainMenuFunctions : MonoBehaviour
     }
     public void StartGame()
     {
-        //SceneManager.LoadScene("");
+        SceneManager.LoadScene("RoomGenerator");
+        Debug.Log("Start");
     }
 
     public void QuitGame()

@@ -23,6 +23,7 @@ public class Olaf_Player_Movement : MonoBehaviour
         moveDirection = new Vector2(MovementX, MovementY).normalized;
 
         AimGunAtMouse();
+        FlashlightLogic();
         /*if (rb.position.y < -2 && rb.position.y > -3)
         {
             transform.localScale = new Vector3(rb.position.y * 0.7f, rb.position.y * 0.7f, 1);
@@ -36,6 +37,7 @@ public class Olaf_Player_Movement : MonoBehaviour
             transform.localScale = new Vector3(-2.3f, -2.3f, 1);
         }*/
     }
+
     private void AimGunAtMouse()
     {
         Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);

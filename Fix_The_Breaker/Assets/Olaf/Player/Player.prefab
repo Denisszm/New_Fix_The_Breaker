@@ -88,7 +88,7 @@ Transform:
   m_GameObject: {fileID: 4796775480601310553}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.187, y: 0.016, z: 0}
+  m_LocalPosition: {x: -0.028, y: 0.017, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -369,7 +369,8 @@ MonoBehaviour:
   Speed: 7
   rb: {fileID: 7269819848852423718}
   mouseObject: {fileID: 0}
-  bulletSpawnPoint: {fileID: 0}
+  FlashPreFab: {fileID: 0}
+  FlashSpawnPoint: {fileID: 0}
 --- !u!70 &7399280346785755458
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -432,7 +433,7 @@ Transform:
   m_GameObject: {fileID: 7884593878806330513}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.075, y: -0.045, z: 0}
+  m_LocalPosition: {x: -0.043, y: -0.049, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
